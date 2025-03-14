@@ -63,15 +63,13 @@ graphs3.markdown("""### Highest Price """)
 graphs3.line_chart(tickerDF.High)
 graphs1.markdown("""### Lowest Price""")
 graphs1.line_chart(tickerDF.Low)
-graphs3.markdown("""### Adjusted Closing Price """)
-graphs3.line_chart(df['Adj Close'])
 
 st.markdown("""======================================================================================================================================================================""")
 st.title('K-NEAREST NEIGHBOUR :-')
 st.write('\n')
 
-df['Open - Close']=df['Open'] - df['Close']
-df['High - Low'] = df['High'] - df['Low']
+df['Open - Close']=(df['Open'] - df['Close']).values.flatten()
+df['High - Low'] = (df['High'] - df['Low']).values.flatten()
 
 X = df[['Open - Close', 'High - Low']]
 
@@ -105,7 +103,11 @@ st.write('\n')
 
 predictions_classification = model.predict(X_test)
 
-actual_predicted_data = pd.DataFrame({'Actual Class':y_test, 'Predicted Class':predictions_classification})
+actual_predicted_data = pd.DataFrame({
+    'Actual Class': np.ravel(y_test),  # Convert to 1D array
+    'Predicted Class': np.ravel(predictions_classification)  # Convert to 1D array
+})
+
 actual_predicted_data.head(10)
 x, y, z = st.columns((2.7,3,4))
 x.markdown("""### KNN CLASSIFIER""")
@@ -130,7 +132,10 @@ model_reg = GridSearchCV(knn_reg, params, cv=5)
 model_reg.fit(X_train_reg, y_train_reg)
 predictions = model_reg.predict(X_test_reg)
 
-valid = pd.DataFrame({'Actual Price':y_test_reg, 'Predicted Price value':predictions})
+valid = pd.DataFrame({
+    'Actual Price': np.ravel(y_test_reg),  # Convert to 1D
+    'Predicted Price value': np.ravel(predictions)  # Convert to 1D
+})
 
 r.write(valid)
 
@@ -148,7 +153,7 @@ plt.show()
 
 st.markdown("""======================================================================================================================================================================""")
 
-model = load_model("C:\\Users\\Lovkush\\OneDrive\\Desktop\\STOCK custom data\\STOCK.keras")
+model = load_model("C:\\Users\\Lovkush\\OneDrive\\Desktop\\STOCK custom data\\LSTM REAL\\STOCK.keras")
 st.title('LONG-SHORT TERM MEMORY (LSTM) :-')
 st.write('\n')
 
@@ -219,7 +224,7 @@ st.write('RMSE : ',rm)
 
 st.markdown("""======================================================================================================================================================================""")
 
-df2 = df['Close']
+df2 = df[['Close']]
 df2 = pd.DataFrame(df2) 
 
 loaded_tree = joblib.load("C:\\Users\\Lovkush\\OneDrive\\Desktop\\STOCK custom data\\Decision Tree Custom\\decision_tree_model.joblib")
